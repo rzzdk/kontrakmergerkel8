@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Interaktif Perjanjian Merger Perbankan (dengan Gemini AI)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .explanation {
+            transition: all 0.3s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #e0f2fe; /* light-blue-100 */
+            color: #0c4a6e; /*-blue-800 */
+            font-weight: 600;
+        }
+        .prose ul, .prose ol {
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+        mark {
+            background-color: #fef08a; /* yellow-200 */
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        mark.current-match {
+            background-color: #fdba74; /* orange-300 */
+            outline: 2px solid #f97316; /* orange-500 */
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        .prose-ai h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+        .prose-ai ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Mobile Header -->
+        <div class="md:hidden bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-20">
+            <h2 class="text-lg font-bold text-gray-700">Navigasi Kontrak</h2>
+            <div>
+                 <button id="search-toggle-mobile" class="text-gray-600 focus:outline-none mr-4">
+                    <i class="fas fa-search fa-lg"></i>
+                </button>
+                <button id="menu-toggle" class="text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-full md:w-80 bg-white border-r border-gray-200 p-6 md:p-8 md:sticky md:top-0 md:h-screen md:overflow-y-auto hidden md:block flex-shrink-0">
+            <h1 class="text-xl font-bold text-gray-900 mb-4">Navigasi Kontrak</h1>
+            
+            <!-- Search Bar -->
+            <div class="relative mb-2">
+                <input type="text" id="search-input" placeholder="Cari di kontrak..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+            </div>
+            <div id="search-nav-controls" class="flex items-center justify-between mb-4 hidden">
+                 <span id="search-counter" class="text-sm text-gray-600"></span>
+                 <div>
+                    <button id="prev-match" class="px-2 py-1 border rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-up"></i></button>
+                    <button id="next-match" class="px-2 py-1 border rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-down"></i></button>
+                 </div>
+            </div>
+            
+            <nav>
+                <ul id="nav-list" class="space-y-2">
+                    <li><a href="#ikhtisar" class="nav-link block px-4 py-2 rounded-md hover:bg-gray-100 transition-colors">Ikhtisar Merger</a></li>
+                    <!-- Links will be dynamically inserted here by JS -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 sm:p-6 md:p-10">
+            <div id="ikhtisar" class="scroll-mt-20">
+                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Perjanjian Penggabungan (Merger)</h1>
+                        <p class="mt-2 text-lg text-gray-600">PT Bank Harapan Sejahtera Tbk. & PT Bank Persada Gemilang Tbk.</p>
+                    </div>
+                     <button id="summarize-btn" class="mt-4 sm:mt-0 flex-shrink-0 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1">
+                        ✨ Buat Ringkasan Eksekutif
+                    </button>
+                </div>
+                
+                <!-- Key Highlights Section -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-sm font-semibold text-gray-500">Para Pihak</h3>
+                                <p class="text-md font-bold">Bank HASEJA & Bank PERSADA</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                             <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-sm font-semibold text-gray-500">Tanggal Perjanjian</h3>
+                                <p class="text-md font-bold">02 Juni 2025</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center">
+                             <div class="bg-purple-100 text-purple-600 p-3 rounded-full">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-sm font-semibold text-gray-500">Rasio Konversi Saham</h3>
+                                <p class="text-md font-bold">1 : 0,80 (HASEJA : PERSADA)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contract Clauses Section -->
+            <div id="contract-content" class="mt-12 space-y-10">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Mobile Search Overlay -->
+    <div id="mobile-search-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-30 flex flex-col">
+        <div class="bg-white p-4 shadow-lg">
+            <div class="relative">
+                 <input type="text" id="search-input-mobile" placeholder="Cari di kontrak..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+            </div>
+             <div id="search-nav-controls-mobile" class="flex items-center justify-between mt-2 hidden">
+                 <span id="search-counter-mobile" class="text-sm text-gray-600"></span>
+                 <div>
+                    <button id="prev-match-mobile" class="px-2 py-1 border rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-up"></i></button>
+                    <button id="next-match-mobile" class="px-2 py-1 border rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-down"></i></button>
+                 </div>
+            </div>
+        </div>
+        <div class="flex-1" id="mobile-overlay-close-area"></div>
+    </div>
+    
+    <!-- Summary Modal -->
+    <div id="summary-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">✨ Ringkasan Eksekutif</h2>
+                <button id="close-summary-modal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="overflow-y-auto">
+                <div id="summary-loader" class="hidden space-y-4 animate-pulse">
+                    <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                </div>
+                <div id="summary-text" class="prose max-w-none prose-ai"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- GEMINI API CALLER ---
+            async function callGemini(prompt) {
+                const apiKey = "AIzaSyCezYe0rwJq2BU7UDPI_d2B6cEqw6NP63o"; // API key is handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: prompt }]
+                    }]
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed with status ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("Unexpected API response structure:", result);
+                    throw new Error("Gagal memproses respons dari AI. Coba lagi nanti.");
+                }
+            }
+            
+            // Data Kontrak
+            const contractData = [
+                { 
+                    id: "konsiderans", 
+                    title: "Konsiderans", 
+                    content: `A. Bahwa Bank HASEJA adalah bank umum yang menjalankan kegiatan usaha perbankan berdasarkan izin usaha dari Otoritas Jasa Keuangan (dahulu Bank Indonesia) Nomor KEP-078/D.03/2005 tanggal 20 Mei 2005.<br><br>B. Bahwa Bank PERSADA adalah bank umum yang menjalankan kegiatan usaha perbankan berdasarkan izin usaha dari Otoritas Jasa Keuangan (dahulu Bank Indonesia) Nomor KEP-102/D.03/2008 tanggal 15 Juli 2008.<br><br>C. Bahwa Para Pihak bermaksud untuk melakukan Penggabungan (Merger) dimana Bank HASEJA akan menggabungkan diri ke dalam Bank PERSADA, dan selanjutnya Bank HASEJA akan berakhir karena hukum tanpa didahului dengan likuidasi, dan Bank PERSADA akan tetap berdiri sebagai Bank yang Menerima Penggabungan.<br><br>D. Bahwa Penggabungan ini dilakukan dengan tujuan untuk memperkuat struktur permodalan, meningkatkan efisiensi, memperluas jangkauan layanan, meningkatkan daya saing, serta memberikan nilai tambah yang lebih besar kepada para pemegang saham, nasabah, karyawan, dan pemangku kepentingan lainnya, sejalan dengan arah kebijakan konsolidasi perbankan nasional.<br><br>E. Bahwa Penggabungan ini telah direncanakan dan dipersiapkan sesuai dengan ketentuan Undang-Undang Nomor 40 Tahun 2007 tentang Perseroan Terbatas ("UUPT"), Peraturan Otoritas Jasa Keuangan Nomor 41/POJK.03/2019 tentang Penggabungan, Peleburan, Pengambilalihan, Integrasi, dan Konversi Bank Umum ("POJK 41/2019"), serta peraturan perundang-undangan terkait lainnya.<br><br>F. Bahwa RUPSLB Bank HASEJA yang diselenggarakan pada tanggal 15 April 2025 telah menyetujui rencana Penggabungan Bank HASEJA ke dalam Bank PERSADA sebagaimana ternyata dalam Akta Berita Acara Rapat Umum Pemegang Saham Luar Biasa PT Bank Harapan Sejahtera Tbk. Nomor 35 tanggal 15 April 2025, yang dibuat di hadapan Budi Santoso, S.H., M.Kn., Notaris di Jakarta Selatan.<br><br>G. Bahwa RUPSLB Bank PERSADA yang diselenggarakan pada tanggal 16 April 2025 telah menyetujui rencana Penggabungan Bank HASEJA ke dalam Bank PERSADA sebagaimana ternyata dalam Akta Berita Acara Rapat Umum Pemegang Saham Luar Biasa PT Bank Persada Gemilang Tbk. Nomor 42 tanggal 16 April 2025, yang dibuat di hadapan Kartika Dewi, S.H., M.Kn., Notaris di Jakarta Pusat.<br><br>H. Bahwa Rancangan Penggabungan telah disusun bersama oleh Direksi Bank HASEJA dan Direksi Bank PERSADA, telah disetujui oleh Dewan Komisaris masing-masing Pihak, dan telah diumumkan sesuai dengan ketentuan Pasal 10 POJK 41/2019 serta Pasal 127 UUPT.<br><br>I. Bahwa Para Pihak telah memperoleh persetujuan prinsip dari Otoritas Jasa Keuangan untuk melakukan Penggabungan ini berdasarkan surat Nomor S-15/D.03/2025 tanggal 10 Mei 2025.<br><br>J. Bahwa Para Pihak telah melakukan pemberitahuan kepada Komisi Pengawas Persaingan Usaha ("KPPU") sesuai dengan ketentuan Undang-Undang Nomor 5 Tahun 1999 tentang Larangan Praktek Monopoli dan Persaingan Usaha Tidak Sehat beserta peraturan pelaksanaannya pada tanggal 12 Mei 2025.`
+                },
+                { 
+                    id: "pasal-1", 
+                    title: "Pasal 1: Definisi", 
+                    content: `Kecuali secara tegas ditentukan lain dalam Perjanjian ini, istilah-istilah berikut memiliki pengertian sebagai berikut:<ol class="list-decimal space-y-2 mt-4"><li>"Afiliasi" berarti pihak-pihak sebagaimana dimaksud dalam Undang-Undang tentang Pasar Modal.</li><li>"Akta Penggabungan" berarti akta otentik yang dibuat di hadapan Notaris yang memuat hasil kesepakatan Penggabungan antara Bank HASEJA dan Bank PERSADA berdasarkan Perjanjian ini dan persetujuan RUPSLB masing-masing Pihak.</li><li>"Aset" berarti seluruh harta kekayaan Bank HASEJA, baik yang berwujud maupun tidak berwujud, baik yang bergerak maupun tidak bergerak, yang tercatat maupun tidak tercatat dalam pembukuan Bank HASEJA pada Tanggal Efektif Penggabungan.</li><li>"Bank yang Menggabungkan Diri" berarti PT Bank Harapan Sejahtera Tbk. (Bank HASEJA).</li><li>"Bank yang Menerima Penggabungan" berarti PT Bank Persada Gemilang Tbk. (Bank PERSADA).</li><li>"Efek" memiliki arti sebagaimana didefinisikan dalam Undang-Undang tentang Pasar Modal.</li><li>"Efek Merugikan yang Material" atau "Material Adverse Effect (MAC)" berarti setiap kejadian, perubahan, kondisi, atau efek yang secara individual atau bersama-sama dengan kejadian, perubahan, kondisi, atau efek lainnya, telah atau secara wajar dapat diperkirakan akan memiliki dampak negatif yang material dan merugikan terhadap: (a) kondisi keuangan, aset, liabilitas, operasional, atau prospek usaha Bank HASEJA atau Bank PERSADA, sebagaimana adanya sebelum Penggabungan; atau (b) kemampuan Para Pihak untuk melaksanakan kewajibannya berdasarkan Perjanjian ini atau untuk menyelesaikan transaksi Penggabungan. Tidak termasuk dalam Efek Merugikan yang Material adalah perubahan kondisi ekonomi secara umum, kondisi pasar keuangan atau pasar modal secara umum, perubahan dalam industri perbankan secara umum yang tidak secara disproporsional mempengaruhi salah satu Pihak dibandingkan dengan bank lain yang sejenis, perubahan dalam Hukum yang Berlaku atau Standar Akuntansi Keuangan yang berlaku umum, atau tindakan terorisme atau perang (kecuali jika secara langsung mempengaruhi aset atau operasional salah satu Pihak secara signifikan).</li><li>"Hari Kerja" berarti hari selain Sabtu, Minggu, dan hari libur resmi nasional yang ditetapkan oleh Pemerintah Republik Indonesia, dimana bank-bank di Jakarta pada umumnya buka untuk melakukan kegiatan usaha.</li><li>"Hukum yang Berlaku" berarti seluruh peraturan perundang-undangan, putusan pengadilan, peraturan pemerintah, peraturan otoritas, dan ketentuan hukum lainnya yang berlaku di wilayah Negara Republik Indonesia.</li><li>"Informasi Rahasia" berarti seluruh informasi dan data yang berkaitan dengan Perjanjian ini, proses Penggabungan, serta informasi mengenai bisnis, keuangan, operasional, nasabah, dan strategi masing-masing Pihak yang diungkapkan oleh satu Pihak kepada Pihak lainnya atau yang diperoleh selama proses uji tuntas (due diligence) dan perundingan Penggabungan.</li><li>"Karyawan" berarti setiap orang yang terikat dalam hubungan kerja dengan Bank HASEJA atau Bank PERSADA berdasarkan perjanjian kerja waktu tertentu atau perjanjian kerja waktu tidak tertentu.</li><li>"Keadaan Memaksa (Force Majeure)" berarti setiap peristiwa atau keadaan di luar kendali wajar Para Pihak, yang tidak dapat diduga sebelumnya, dan yang dampaknya tidak dapat dihindari atau diatasi secara wajar, yang secara langsung menghalangi salah satu Pihak untuk melaksanakan kewajibannya berdasarkan Perjanjian ini, termasuk namun tidak terbatas pada bencana alam (gempa bumi, banjir, tsunami, letusan gunung berapi), epidemi, pandemi, perang (dinyatakan maupun tidak), pemberontakan, huru-hara sipil, terorisme, sabotase, kebakaran hebat, ledakan, embargo, atau tindakan pemerintah yang secara langsung melarang pelaksanaan Perjanjian ini.</li><li>"Kepailitan" berarti keadaan dimana suatu pihak dinyatakan pailit berdasarkan putusan pengadilan niaga yang telah mempunyai kekuatan hukum tetap.</li><li>"Kewajiban" atau "Liabilitas" berarti seluruh utang dan kewajiban hukum lainnya dari Bank HASEJA kepada pihak ketiga, baik yang telah jatuh tempo maupun yang akan jatuh tempo, yang ada pada Tanggal Efektif Penggabungan.</li><li>"Kreditor" berarti setiap pihak yang mempunyai piutang atau tagihan kepada Bank HASEJA.</li><li>"Laporan Keuangan Proforma" berarti laporan posisi keuangan proforma Bank PERSADA setelah Penggabungan yang disusun sesuai dengan Standar Akuntansi Keuangan yang berlaku di Indonesia.</li><li>"Menteri" berarti Menteri yang tugas dan tanggung jawabnya di bidang hukum dan hak asasi manusia Republik Indonesia.</li><li>"Notaris" berarti pejabat umum yang berwenang untuk membuat akta otentik mengenai semua perbuatan, perjanjian, dan penetapan yang diharuskan oleh peraturan perundang-undangan dan/atau yang dikehendaki oleh yang berkepentingan untuk dinyatakan dalam akta otentik.</li><li>"OJK" berarti Otoritas Jasa Keuangan Republik Indonesia.</li><li>"Penggabungan" berarti penggabungan usaha antara Bank HASEJA dan Bank PERSADA dimana Bank HASEJA menggabungkan diri ke dalam Bank PERSADA, yang mengakibatkan seluruh Aset dan Liabilitas Bank HASEJA beralih karena hukum kepada Bank PERSADA, dan status badan hukum Bank HASEJA berakhir karena hukum tanpa didahului likuidasi.</li><li>"Persetujuan OJK" berarti persetujuan tertulis dari OJK atas rencana Penggabungan ini sebagaimana disyaratkan dalam POJK 41/2019.</li><li>"Rancangan Penggabungan" berarti rancangan penggabungan yang telah disusun bersama oleh Direksi Bank HASEJA dan Bank PERSADA, disetujui oleh Dewan Komisaris masing-masing, diumumkan, dan disetujui oleh RUPSLB masing-masing Pihak, sebagaimana dimaksud dalam Pasal 9 POJK 41/2019.</li><li>"Rasio Konversi Saham" berarti rasio yang digunakan untuk mengkonversi setiap saham Bank HASEJA menjadi saham Bank PERSADA sebagaimana ditetapkan dalam Pasal 5 Perjanjian ini.</li><li>"RUPSLB" berarti Rapat Umum Pemegang Saham Luar Biasa Bank HASEJA dan Bank PERSADA yang telah memberikan persetujuan atas Penggabungan ini.</li><li>"Saham" berarti efek bersifat ekuitas yang diterbitkan oleh Bank HASEJA atau Bank PERSADA.</li><li>"Tanggal Efektif Penggabungan" berarti tanggal dimana Penggabungan ini menjadi efektif secara hukum sebagaimana ditetapkan dalam Pasal 3 Perjanjian ini.</li></ol>`
+                },
+                // ... (all other contract data remains the same, shortened for brevity)
+                { id: "pasal-2", title: "Pasal 2: Penggabungan Usaha", content: `1. Para Pihak dengan ini sepakat dan setuju untuk melakukan Penggabungan, dimana Bank HASEJA akan menggabungkan diri ke dalam Bank PERSADA.<br><br>2. Dengan dilakukannya Penggabungan ini:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Bank PERSADA akan tetap berdiri dan melanjutkan kegiatan usahanya sebagai Bank yang Menerima Penggabungan.</li> <li>b. Bank HASEJA akan berakhir karena hukum (bubar demi hukum) tanpa didahului dengan proses likuidasi pada Tanggal Efektif Penggabungan.</li> <li>c. Seluruh Aset dan Liabilitas Bank HASEJA akan beralih karena hukum kepada Bank PERSADA pada Tanggal Efektif Penggabungan.</li> <li>d. Para pemegang saham Bank HASEJA akan menjadi pemegang saham Bank PERSADA melalui mekanisme konversi saham sebagaimana diatur dalam Pasal 5 Perjanjian ini.</li> </ul>`},
+                { id: "pasal-3", title: "Pasal 3: Tanggal Efektif Penggabungan", content: `Penggabungan ini akan berlaku efektif pada tanggal diperolehnya Persetujuan Menteri atas perubahan Anggaran Dasar Bank PERSADA sehubungan dengan Penggabungan ini, atau tanggal kemudian yang ditetapkan dalam persetujuan Menteri tersebut.<br><br>Tanggal tersebut selanjutnya disebut sebagai "Tanggal Efektif Penggabungan".` },
+                { id: "pasal-26", title: "Pasal 26: Penutup", content: `Perjanjian ini dibuat dalam rangkap 2 (dua), asli masing-masing bermeterai cukup dan memiliki kekuatan hukum yang sama, satu rangkap untuk Bank HASEJA dan satu rangkap untuk Bank PERSADA.<br><br>Demikianlah perjanjian ini dibuat dan ditandatangani oleh para wakil yang sah dari Para Pihak pada tanggal sebagaimana tersebut pada awal Perjanjian ini.` }
+            ];
+            
+            // Re-populate the rest of the contract data for full functionality
+            const fullContractData = [
+                ...contractData.slice(0, 2),
+                { id: "pasal-4", title: "Pasal 4: Pengalihan Aset dan Liabilitas", content: `1. Pada Tanggal Efektif Penggabungan, seluruh Aset Bank HASEJA, baik yang diketahui maupun tidak diketahui, yang ada pada saat itu, dengan sendirinya beralih karena hukum menjadi Aset Bank PERSADA.<br><br>2. Pada Tanggal Efektif Penggabungan, seluruh Liabilitas Bank HASEJA, baik yang diketahui maupun tidak diketahui, yang ada pada saat itu, dengan sendirinya beralih karena hukum menjadi Liabilitas Bank PERSADA.<br><br>3. Peralihan Aset dan Liabilitas sebagaimana dimaksud dalam ayat (1) dan ayat (2) Pasal ini mencakup segala hak, kewajiban, tuntutan, manfaat, dan beban yang melekat atau timbul dari Aset dan Liabilitas tersebut.<br><br>4. Sejak Tanggal Efektif Penggabungan, Bank PERSADA berhak sepenuhnya untuk memiliki, menguasai, mengelola, menagih, dan melakukan segala tindakan hukum terhadap Aset yang beralih, serta wajib bertanggung jawab dan memenuhi seluruh Liabilitas yang beralih.<br><br>5. Para Pihak sepakat bahwa untuk keperluan administratif dan pembuktian peralihan hak atas Aset tertentu (misalnya tanah dan bangunan, kendaraan bermotor, hak kekayaan intelektual), Para Pihak atau Bank PERSADA (setelah Tanggal Efektif Penggabungan) akan melakukan tindakan-tindakan yang diperlukan untuk mencatatkan peralihan hak tersebut atas nama Bank PERSADA sesuai dengan ketentuan Hukum yang Berlaku, termasuk namun tidak terbatas pada penandatanganan akta-akta peralihan, balik nama, dan pendaftaran kepada instansi yang berwenang. Segala biaya yang timbul sehubungan dengan tindakan administratif tersebut akan ditanggung oleh Bank PERSADA.` },
+                { id: "pasal-5", title: "Pasal 5: Konversi Saham", content: `1. Sebagai akibat dari Penggabungan ini, setiap pemegang saham Bank HASEJA akan menerima sejumlah saham Bank PERSADA berdasarkan Rasio Konversi Saham yang telah disepakati dan disetujui dalam RUPSLB masing-masing Pihak serta dituangkan dalam Rancangan Penggabungan.<br><br>2. Rasio Konversi Saham ditetapkan sebesar: 1 (satu) saham Bank HASEJA akan dikonversi menjadi 0,80 (nol koma delapan puluh) saham Bank PERSADA.<br><br>3. Penentuan Rasio Konversi Saham telah didasarkan pada penilaian independen yang dilakukan oleh PT Penilai Profesional Indonesia sebagaimana termuat dalam Laporan Penilaian Nomor LPI-007/FIN-VAL/III/2025 tanggal 1 Maret 2025.<br><br>4. Bank PERSADA akan menerbitkan sejumlah 800.000.000 (delapan ratus juta) saham baru dengan nilai nominal Rp 500,- (lima ratus Rupiah) per saham, yang akan dialokasikan kepada para pemegang saham Bank HASEJA sesuai dengan Rasio Konversi Saham. (Asumsi Bank HASEJA memiliki 1.000.000.000 saham beredar).<br><br>5. Dalam hal hasil konversi saham menghasilkan pecahan saham, maka pecahan saham tersebut akan dibulatkan ke bawah menjadi jumlah saham utuh terdekat, dan nilai pecahan saham tersebut akan dibayarkan secara tunai oleh Bank PERSADA kepada pemegang saham yang berhak berdasarkan harga pasar rata-rata tertimbang saham Bank PERSADA selama 5 (lima) Hari Kerja bursa sebelum Tanggal Efektif Penggabungan.<br><br>6. Tata cara pelaksanaan konversi saham, termasuk pencatatan kepemilikan saham baru Bank PERSADA atas nama pemegang saham Bank HASEJA, akan diatur lebih lanjut oleh Bank PERSADA sesuai dengan ketentuan anggaran dasar Bank PERSADA dan peraturan perundang-undangan di bidang pasar modal.` },
+                { id: "pasal-6", title: "Pasal 6: Modal Bank yang Menerima Penggabungan", content: `1. Sehubungan dengan penerbitan saham baru untuk konversi saham sebagaimana dimaksud dalam Pasal 5, maka struktur permodalan Bank PERSADA setelah Tanggal Efektif Penggabungan akan menjadi sebagai berikut (berdasarkan Laporan Keuangan Proforma):<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Modal Dasar: Rp 20.000.000.000.000,- (dua puluh triliun Rupiah)</li> <li>b. Modal Ditempatkan dan Disetor Penuh: Rp 7.500.000.000.000,- (tujuh triliun lima ratus miliar Rupiah) (Asumsi modal disetor awal Bank PERSADA Rp 3.5 Triliun + Rp 400 Miliar dari konversi saham Bank HASEJA [800 juta saham x Rp500] + tambahan modal lain jika ada dalam skenario merger).</li> </ul><br> 2. Perubahan struktur permodalan Bank PERSADA tersebut akan dicatatkan dalam perubahan Anggaran Dasar Bank PERSADA yang akan dimintakan persetujuan atau diberitahukan kepada Menteri sesuai ketentuan UUPT.` },
+                { id: "pasal-7", title: "Pasal 7: Direksi dan Dewan Komisaris", content: `1. Susunan anggota Direksi Bank PERSADA setelah Tanggal Efektif Penggabungan adalah sebagai berikut:<br> <ul class="list-none space-y-1 ml-6"> <li>Direktur Utama: Rina Wijayanti</li> <li>Wakil Direktur Utama: Bambang Hartono</li> <li>Direktur Keuangan: Siti Aminah</li> <li>Direktur Operasional: Iwan Setiawan</li> <li>Direktur Kepatuhan: Dewi Lestari</li> </ul><br> 2. Susunan anggota Dewan Komisaris Bank PERSADA setelah Tanggal Efektif Penggabungan adalah sebagai berikut:<br> <ul class="list-none space-y-1 ml-6"> <li>Komisaris Utama (Independen): Prof. Dr. H. Muhammad Yusuf</li> <li>Wakil Komisaris Utama (Independen): Dr. Indah Permatasari</li> <li>Komisaris: Joko Pramono</li> <li>Komisaris Independen: Antonius Salim</li> </ul><br> 3. Pengangkatan anggota Direksi dan Dewan Komisaris tersebut di atas telah disetujui dalam RUPSLB Bank PERSADA tanggal 16 April 2025 dan akan efektif sejak Tanggal Efektif Penggabungan, serta akan dimintakan persetujuan atau diberitahukan perubahannya kepada OJK dan Menteri sesuai ketentuan yang berlaku.` },
+                { id: "pasal-8", title: "Pasal 8: Karyawan", content: `1. Pada Tanggal Efektif Penggabungan, seluruh Karyawan Bank HASEJA akan beralih status kepegawaiannya menjadi Karyawan Bank PERSADA.<br><br>2. Bank PERSADA akan menerima pengalihan Karyawan Bank HASEJA dengan syarat-syarat dan ketentuan-ketentuan kerja (termasuk hak dan kewajiban) yang secara keseluruhan tidak kurang baik (no less favorable) dibandingkan dengan syarat-syarat dan ketentuan-ketentuan kerja yang berlaku bagi mereka di Bank HASEJA sebelum Tanggal Efektif Penggabungan, kecuali disepakati lain secara individual dengan memperhatikan ketentuan Hukum yang Berlaku.<br><br>3. Bank PERSADA akan melakukan upaya harmonisasi atas syarat-syarat dan ketentuan-ketentuan kerja, program pensiun, serta manfaat lainnya bagi Karyawan yang beralih dalam jangka waktu yang wajar setelah Tanggal Efektif Penggabungan. Proses harmonisasi ini akan dilakukan dengan melibatkan konsultasi dengan perwakilan Karyawan atau serikat pekerja yang ada di masing-masing Bank, sesuai dengan prinsip-prinsip hubungan industrial yang baik.<br><br>4. Bagi Karyawan Bank HASEJA yang tidak bersedia melanjutkan hubungan kerja dengan Bank PERSADA setelah Penggabungan, maka penyelesaian hak-haknya akan dilakukan oleh Bank HASEJA (sebelum Tanggal Efektif Penggabungan) atau oleh Bank PERSADA (setelah Tanggal Efektif Penggabungan) sesuai dengan ketentuan Undang-Undang Nomor 13 Tahun 2003 tentang Ketenagakerjaan beserta peraturan pelaksanaannya dan/atau Perjanjian Kerja Bersama/Peraturan Perusahaan yang berlaku.<br><br>5. Hal-hal yang berkaitan dengan status, hak, dan kewajiban Karyawan Bank PERSADA yang telah ada sebelum Penggabungan tidak mengalami perubahan sebagai akibat dari Penggabungan ini, kecuali ada penyesuaian yang disepakati dan tidak mengurangi hak-hak yang telah ada.` },
+                { id: "pasal-9", title: "Pasal 9: Kreditor dan Pemegang Saham Minoritas", content: `1. Para Pihak menjamin bahwa pelaksanaan Penggabungan ini dilakukan dengan memperhatikan dan tidak mengurangi hak-hak para Kreditor masing-masing Pihak sesuai dengan ketentuan Hukum yang Berlaku.<br><br>2. Bank HASEJA dan Bank PERSADA telah melakukan pengumuman mengenai rencana Penggabungan ini kepada para Kreditor dan memberikan kesempatan kepada Kreditor untuk mengajukan keberatan sesuai dengan ketentuan Pasal 127 UUPT dan Pasal 13 POJK 41/2019.<br><br>3. Setiap keberatan yang sah dari Kreditor yang telah diajukan akan diselesaikan oleh Para Pihak sebelum Tanggal Efektif Penggabungan atau sesuai dengan skema penyelesaian yang telah disepakati dengan Kreditor tersebut dan telah disampaikan dalam RUPSLB.<br><br>4. Hak-hak pemegang saham minoritas Bank HASEJA dan Bank PERSADA yang tidak menyetujui rencana Penggabungan telah diberikan kesempatan untuk meminta sahamnya dibeli dengan harga yang wajar sesuai dengan ketentuan Pasal 62 UUPT dan Pasal 15 POJK 41/2019, dan pelaksanaan hak tersebut tidak menghentikan proses Penggabungan.` },
+                { id: "pasal-10", title: "Pasal 10: Pernyataan dan Jaminan", content: `1. Masing-masing Pihak dengan ini menyatakan dan menjamin kepada Pihak lainnya bahwa pada tanggal ditandatanganinya Perjanjian ini dan pada Tanggal Efektif Penggabungan:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Pihaknya adalah perseroan terbatas yang didirikan secara sah dan tunduk pada hukum Negara Republik Indonesia dan memiliki segala izin yang diperlukan untuk menjalankan kegiatan usahanya sebagai bank umum, termasuk namun tidak terbatas pada izin usaha bank, izin produk dan layanan, serta kepatuhan terhadap seluruh ketentuan OJK dan regulator terkait lainnya.</li> <li>b. Pihaknya memiliki kewenangan penuh untuk menandatangani dan melaksanakan Perjanjian ini serta melakukan segala tindakan yang diperlukan untuk terlaksananya Penggabungan.</li> <li>c. Penandatanganan dan pelaksanaan Perjanjian ini tidak dan tidak akan bertentangan dengan anggaran dasar pihaknya, ketentuan Hukum yang Berlaku, atau perjanjian material lainnya dimana pihaknya menjadi salah satu pihak atau yang mengikat asetnya, termasuk namun tidak terbatas pada perjanjian kredit, perjanjian penerbitan efek utang, atau perjanjian material lainnya dengan nasabah atau pemasok.</li> <li>d. Seluruh persetujuan korporasi yang diperlukan, termasuk persetujuan RUPSLB, untuk melakukan Penggabungan telah diperoleh secara sah dan sesuai dengan anggaran dasar serta Hukum yang Berlaku.</li> <li>e. Tidak ada perkara, tuntutan, investigasi, atau sengketa hukum yang material, baik yang sedang berjalan maupun yang diancamkan secara tertulis, di hadapan pengadilan, arbitrase, atau instansi pemerintah yang dapat secara signifikan mempengaruhi kemampuan pihaknya untuk melaksanakan kewajibannya berdasarkan Perjanjian ini atau mempengaruhi keabsahan Penggabungan, atau yang dapat mengakibatkan Efek Merugikan yang Material terhadap bisnis atau kondisi keuangan pihaknya.</li> <li>f. Seluruh informasi, data, dan dokumen yang diberikan kepada Pihak lainnya sehubungan dengan rencana Penggabungan ini, termasuk namun tidak terbatas pada informasi yang diberikan selama proses uji tuntas (due diligence), adalah benar, akurat, lengkap dalam segala hal yang material, dan tidak menyesatkan serta tidak menghilangkan fakta material yang jika diungkapkan akan membuat informasi yang diberikan menjadi menyesatkan.</li> <li>g. Laporan keuangan masing-masing Pihak (termasuk neraca, laporan laba rugi, laporan arus kas, dan laporan perubahan ekuitas beserta catatan atas laporan keuangan) yang telah disampaikan kepada Pihak lainnya telah disusun sesuai dengan Standar Akuntansi Keuangan yang berlaku di Indonesia yang diterapkan secara konsisten dan menyajikan secara benar dan wajar posisi keuangan dan hasil usaha pihaknya pada tanggal dan untuk periode yang bersangkutan.</li> <li>h. Tidak ada utang pajak yang material yang belum dibayar atau belum dicadangkan secara memadai dalam laporan keuangan pihaknya, dan pihaknya telah menyampaikan seluruh surat pemberitahuan pajak yang disyaratkan secara tepat waktu dan akurat.</li> <li>i. Pihaknya memiliki hak yang sah dan tidak terbebani (kecuali beban yang telah diungkapkan secara tertulis kepada Pihak lainnya atau yang timbul dalam kegiatan usaha normal) atas seluruh Aset material yang tercatat dalam laporan keuangannya.</li> <li>j. Pihaknya telah menjalankan usahanya dengan mematuhi seluruh Hukum yang Berlaku dalam segala hal yang material, termasuk namun tidak terbatas pada peraturan perbankan, anti pencucian uang, pendanaan terorisme, dan perlindungan konsumen.</li> </ul><br> 2. Pernyataan dan jaminan yang diberikan dalam Pasal ini akan tetap berlaku dan memiliki kekuatan penuh setelah Tanggal Efektif Penggabungan.` },
+                { id: "pasal-11", title: "Pasal 11: Prasyarat (Conditions Precedent)", content: `Pelaksanaan Penggabungan berdasarkan Perjanjian ini tunduk pada dipenuhinya prasyarat-prasyarat berikut selambat-lambatnya pada Tanggal Efektif Penggabungan, kecuali jika dikesampingkan secara tertulis oleh Pihak yang berkepentingan atas pemenuhan prasyarat tersebut:<br> <ol class="list-decimal space-y-2 mt-4"> <li>Diperolehnya Persetujuan OJK atas rencana Penggabungan ini, dan persetujuan tersebut masih berlaku penuh dan tidak dicabut atau diubah secara material.</li> <li>Diperolehnya persetujuan atau diterimanya pemberitahuan dari Menteri atas perubahan Anggaran Dasar Bank PERSADA sehubungan dengan Penggabungan ini (jika ada perubahan), dan persetujuan atau tanda terima tersebut masih berlaku penuh.</li> <li>Telah dilakukannya pemberitahuan dan/atau diperolehnya persetujuan (jika disyaratkan) dari KPPU terkait Penggabungan ini, dan tidak ada keberatan atau tindakan dari KPPU yang menghalangi Penggabungan.</li> <li>Tidak adanya putusan pengadilan atau perintah dari instansi pemerintah yang berwenang yang melarang, menunda, atau secara material membatasi pelaksanaan Penggabungan.</li> <li>Tidak terjadinya Efek Merugikan yang Material terhadap kondisi keuangan, aset, atau kegiatan usaha Bank HASEJA atau Bank PERSADA sejak tanggal penandatanganan Perjanjian ini hingga sesaat sebelum Tanggal Efektif Penggabungan.</li> <li>Pernyataan dan jaminan yang diberikan oleh masing-masing Pihak dalam Pasal 10 Perjanjian ini tetap benar dan akurat dalam segala hal yang material pada Tanggal Efektif Penggabungan seolah-olah dibuat pada tanggal tersebut.</li> <li>Telah diselesaikannya seluruh keberatan yang sah dari Kreditor sebagaimana dimaksud dalam Pasal 9 ayat (3) Perjanjian ini.</li> <li>Para Pihak telah saling memberikan dukungan penuh dan bekerja sama dalam proses perolehan seluruh persetujuan regulator dan pihak ketiga yang diperlukan untuk Penggabungan.</li> </ol>` },
+                { id: "pasal-12", title: "Pasal 12: Pelaksanaan dan Integrasi Pasca-Penggabungan", content: `1. Para Pihak akan bekerja sama dengan itikad baik untuk memenuhi seluruh prasyarat sebagaimana dimaksud dalam Pasal 11 dan melaksanakan seluruh langkah yang diperlukan untuk mewujudkan Penggabungan sesuai dengan ketentuan Perjanjian ini dan Hukum yang Berlaku.<br><br>2. Setelah seluruh prasyarat terpenuhi atau dikesampingkan, Para Pihak akan menandatangani Akta Penggabungan di hadapan Notaris yang akan ditunjuk bersama kemudian.<br><br>3. Bank PERSADA akan melakukan segala tindakan yang diperlukan untuk pendaftaran dan pengumuman Akta Penggabungan dan/atau perubahan Anggaran Dasarnya sesuai dengan ketentuan UUPT dan POJK 41/2019.<br><br>4. Bank PERSADA akan mengumumkan hasil Penggabungan kepada masyarakat melalui paling sedikit 1 (satu) surat kabar harian berbahasa Indonesia yang berperedaran nasional dan Situs Web Bank PERSADA dalam jangka waktu paling lambat 30 (tiga puluh) hari terhitung sejak Tanggal Efektif Penggabungan, serta menyampaikan laporan pelaksanaan Penggabungan kepada OJK sesuai ketentuan Pasal 21 POJK 41/2019.<br><br>5. Sejak Tanggal Efektif Penggabungan, Bank PERSADA akan melakukan segala upaya yang wajar dan komersial untuk mengintegrasikan secara penuh dan efektif operasional, sistem teknologi informasi, produk, layanan, jaringan kantor, dan sumber daya manusia Bank HASEJA ke dalam Bank PERSADA.<br><br>6. Bank PERSADA akan melakukan upaya yang diperlukan untuk melakukan novasi atau penyesuaian atas perjanjian-perjanjian material Bank HASEJA dengan nasabah dan pihak ketiga lainnya agar mengikat Bank PERSADA sebagai pihak, termasuk namun tidak terbatas pada perjanjian kredit yang melibatkan hak tanggungan atau jaminan lainnya, guna menjamin kelangsungan dan kepastian hukum bagi seluruh pihak terkait.` },
+                { id: "pasal-13", title: "Pasal 13: Biaya dan Pengeluaran", content: `1. Seluruh biaya dan pengeluaran yang timbul sehubungan dengan persiapan, perundingan, penandatanganan, dan pelaksanaan Perjanjian ini serta proses Penggabungan, termasuk namun tidak terbatas pada biaya jasa profesional (konsultan hukum, penilai independen, akuntan publik, notaris), biaya perizinan, biaya pengumuman, dan biaya administratif lainnya, akan menjadi beban dan tanggung jawab:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Bank HASEJA untuk biaya-biaya yang timbul di pihaknya sebelum Tanggal Efektif Penggabungan.</li> <li>b. Bank PERSADA untuk biaya-biaya yang timbul di pihaknya sebelum Tanggal Efektif Penggabungan, dan seluruh biaya bersama serta biaya yang timbul setelah Tanggal Efektif Penggabungan.</li> </ul><br> 2. Ketentuan mengenai pembagian biaya yang lebih rinci dapat disepakati secara terpisah oleh Para Pihak.` },
+                { id: "pasal-14", title: "Pasal 14: Ganti Rugi (Indemnitas)", content: `1. Bank HASEJA (atau para pemegang sahamnya secara proporsional setelah bubar, sebagaimana dapat diatur lebih lanjut dalam perjanjian terpisah jika diperlukan) setuju untuk mengganti rugi dan membebaskan Bank PERSADA dari dan terhadap setiap kerugian, kerusakan, biaya (termasuk biaya hukum yang wajar), pengeluaran, denda, atau liabilitas (secara bersama-sama disebut "Kerugian") yang diderita atau ditanggung oleh Bank PERSADA sebagai akibat dari:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Pelanggaran atau ketidakbenaran dari setiap Pernyataan dan Jaminan yang dibuat oleh Bank HASEJA dalam Pasal 10 Perjanjian ini.</li> <li>b. Kegagalan Bank HASEJA untuk melaksanakan atau mematuhi setiap perjanjian atau kewajibannya berdasarkan Perjanjian ini.</li> <li>c. Setiap Liabilitas Bank HASEJA yang tidak diungkapkan secara benar dan lengkap kepada Bank PERSADA sebelum Tanggal Efektif Penggabungan dan tidak tercermin dalam Laporan Keuangan Proforma, kecuali Liabilitas tersebut timbul dalam kegiatan usaha normal Bank HASEJA antara tanggal laporan keuangan terakhir yang diungkapkan dan Tanggal Efektif Penggabungan.</li> </ul><br> 2. Bank PERSADA setuju untuk mengganti rugi dan membebaskan Bank HASEJA (atau para pemegang sahamnya secara proporsional) dari dan terhadap setiap Kerugian yang diderita atau ditanggung oleh Bank HASEJA (atau para pemegang sahamnya) sebagai akibat dari:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Pelanggaran atau ketidakbenaran dari setiap Pernyataan dan Jaminan yang dibuat oleh Bank PERSADA dalam Pasal 10 Perjanjian ini.</li> <li>b. Kegagalan Bank PERSADA untuk melaksanakan atau mematuhi setiap perjanjian atau kewajibannya berdasarkan Perjanjian ini.</li> </ul><br> 3. Prosedur klaim ganti rugi, batasan waktu pengajuan klaim, serta batasan jumlah ganti rugi (jika ada, misalnya cap atau basket) akan diatur lebih lanjut dalam Akta Penggabungan atau perjanjian terpisah antara Para Pihak atau perwakilan pemegang saham Bank HASEJA dengan Bank PERSADA. (Catatan: Untuk tugas S1, klausul ini mungkin sudah cukup, detail prosedur bisa di luar cakupan).` },
+                { id: "pasal-15", title: "Pasal 15: Aspek Perpajakan", content: `1. Para Pihak sepakat bahwa Penggabungan ini akan dilaksanakan dengan memperhatikan dan mematuhi seluruh ketentuan peraturan perundang-undangan perpajakan yang berlaku di Indonesia.<br><br>2. Para Pihak akan bekerja sama untuk menentukan perlakuan akuntansi dan perpajakan yang paling efisien dan sesuai dengan peraturan yang berlaku untuk transaksi Penggabungan ini, termasuk namun tidak terbatas pada penggunaan nilai buku untuk pengalihan Aset dalam rangka Penggabungan (jika memenuhi syarat dan telah memperoleh persetujuan dari Direktorat Jenderal Pajak).<br><br>3. Masing-masing Pihak bertanggung jawab atas pemenuhan kewajiban perpajakannya sendiri yang timbul sebelum, selama, dan setelah pelaksanaan Penggabungan ini. Bank PERSADA akan bertanggung jawab atas kewajiban perpajakan Bank HASEJA yang beralih karena hukum sebagai akibat dari Penggabungan.<br><br>4. Para Pihak akan saling memberikan informasi dan dokumen yang diperlukan secara wajar untuk keperluan pemenuhan kewajiban perpajakan terkait Penggabungan ini.` },
+                { id: "pasal-16", title: "Pasal 16: Kerahasiaan", content: `1. Para Pihak sepakat untuk menjaga kerahasiaan seluruh Informasi Rahasia, dan tidak akan mengungkapkan Informasi Rahasia tersebut kepada pihak ketiga mana pun tanpa persetujuan tertulis terlebih dahulu dari Pihak lainnya, kecuali:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Diwajibkan oleh Hukum yang Berlaku atau perintah pengadilan/instansi pemerintah yang berwenang (dengan pemberitahuan sebelumnya kepada Pihak pengungkap sejauh diizinkan oleh hukum).</li> <li>b. Diungkapkan kepada penasihat profesional masing-masing Pihak (konsultan hukum, akuntan, penasihat keuangan) yang terikat oleh kewajiban kerahasiaan serupa dan hanya sejauh diperlukan untuk pelaksanaan Penggabungan.</li> <li>c. Informasi tersebut telah menjadi domain publik bukan karena pelanggaran oleh salah satu Pihak.</li> </ul><br> 2. Kewajiban kerahasiaan ini akan tetap berlaku selama 5 (lima) tahun setelah Tanggal Efektif Penggabungan atau berakhirnya Perjanjian ini karena sebab apapun.` },
+                { id: "pasal-17", title: "Pasal 17: Keadaan Memaksa (Force Majeure)", content: `1. Tidak satu Pihak pun akan dianggap melanggar Perjanjian ini atau bertanggung jawab atas kegagalan atau keterlambatan dalam melaksanakan kewajibannya berdasarkan Perjanjian ini (kecuali kewajiban pembayaran uang) jika kegagalan atau keterlambatan tersebut disebabkan oleh suatu Keadaan Memaksa.<br><br>2. Pihak yang mengalami Keadaan Memaksa wajib memberitahukan secara tertulis kepada Pihak lainnya dalam waktu selambat-lambatnya 7 (tujuh) Hari Kerja sejak terjadinya Keadaan Memaksa tersebut, dengan menyertakan perkiraan lamanya dan dampak dari Keadaan Memaksa tersebut.<br><br>3. Pihak yang terkena dampak Keadaan Memaksa wajib melakukan segala upaya yang wajar untuk mengurangi dampak Keadaan Memaksa dan untuk melanjutkan pelaksanaan kewajibannya sesegera mungkin setelah Keadaan Memaksa berakhir.<br><br>4. Jika Keadaan Memaksa berlangsung secara terus-menerus selama lebih dari 60 (enam puluh) hari kalender, Para Pihak akan berunding dengan itikad baik untuk mencari solusi atau menentukan apakah Perjanjian ini dapat dilanjutkan atau diakhiri.` },
+                { id: "pasal-18", title: "Pasal 18: Hukum yang Berlaku", content: `Perjanjian ini diatur oleh dan ditafsirkan sesuai dengan hukum Negara Republik Indonesia.` },
+                { id: "pasal-19", title: "Pasal 19: Penyelesaian Sengketa", content: `1. Setiap sengketa, perselisihan, atau perbedaan pendapat yang timbul dari atau sehubungan dengan Perjanjian ini atau pelaksanaannya ("Sengketa") akan diselesaikan oleh Para Pihak secara musyawarah untuk mufakat.<br><br>2. Apabila Sengketa tidak dapat diselesaikan secara musyawarah untuk mufakat dalam waktu 30 (tiga puluh) hari kalender sejak tanggal pemberitahuan tertulis mengenai adanya Sengketa dari satu Pihak kepada Pihak lainnya, maka Sengketa tersebut akan diselesaikan melalui Pengadilan Negeri Jakarta Pusat.<br><br>3. Selama proses penyelesaian Sengketa, Para Pihak tetap berkewajiban untuk melaksanakan kewajiban-kewajibannya berdasarkan Perjanjian ini yang tidak menjadi subjek Sengketa.` },
+                { id: "pasal-20", title: "Pasal 20: Pemberitahuan", content: `Setiap pemberitahuan, permintaan, atau komunikasi lainnya yang disyaratkan atau diizinkan berdasarkan Perjanjian ini harus dilakukan secara tertulis dan dikirimkan melalui kurir, surat tercatat, atau email ke alamat Para Pihak sebagai berikut:<br><br> <strong>Jika kepada Bank HASEJA:</strong><br> PT Bank Harapan Sejahtera Tbk.<br> Alamat: Jalan Jenderal Sudirman Kav. 25, Jakarta Selatan 12920<br> Up.: Direktur Utama<br> Email: corsec@bankhaseja.co.id<br> Telepon: (021) 555-1234<br><br> <strong>Jika kepada Bank PERSADA:</strong><br> PT Bank Persada Gemilang Tbk.<br> Alamat: Jalan M.H. Thamrin No. 10, Jakarta Pusat 10310<br> Up.: Direktur Utama<br> Email: corporate.secretary@bankpersada.co.id<br> Telepon: (021) 777-5678<br><br> Atau ke alamat lain yang mungkin diberitahukan secara tertulis oleh satu Pihak kepada Pihak lainnya dari waktu ke waktu. Pemberitahuan dianggap telah diterima pada saat diterima oleh penerima jika dikirim melalui kurir, 5 (lima) Hari Kerja setelah tanggal pengiriman jika melalui surat tercatat, atau pada saat konfirmasi penerimaan diterima jika melalui email.` },
+                { id: "pasal-21", title: "Pasal 21: Perubahan", content: `Tidak ada perubahan, modifikasi, atau amandemen terhadap Perjanjian ini yang sah atau mengikat Para Pihak kecuali dibuat secara tertulis dan ditandatangani oleh wakil yang sah dari masing-masing Pihak.` },
+                { id: "pasal-22", title: "Pasal 22: Keseluruhan Perjanjian", content: `Perjanjian ini beserta lampiran-lampirannya (jika ada, yang merupakan satu kesatuan dan bagian yang tidak terpisahkan dari Perjanjian ini) merupakan keseluruhan perjanjian dan pemahaman antara Para Pihak sehubungan dengan pokok permasalahan dalam Perjanjian ini, dan menggantikan seluruh perjanjian, negosiasi, korespondensi, dan pemahaman sebelumnya, baik lisan maupun tulisan, antara Para Pihak mengenai hal tersebut.` },
+                { id: "pasal-23", title: "Pasal 23: Keterpisahan (Severability)", content: `Apabila satu atau lebih ketentuan dalam Perjanjian ini dinyatakan tidak sah, tidak berlaku, atau tidak dapat dilaksanakan oleh pengadilan atau otoritas yang berwenang, maka:<br> <ul class="list-disc space-y-2 ml-6"> <li>a. Ketentuan tersebut akan dianggap terpisah dari Perjanjian ini sejauh ketidakabsahan, ketidakberlakuan, atau ketidakdapatlaksanaannya.</li> <li>b. Keabsahan, keberlakuan, dan dapat dilaksanakannya ketentuan-ketentuan lainnya dalam Perjanjian ini tidak akan terpengaruh atau terkurangi.</li> <li>c. Para Pihak akan bernegosiasi dengan itikad baik untuk mengganti ketentuan yang tidak sah, tidak berlaku, atau tidak dapat dilaksanakan tersebut dengan ketentuan baru yang sah, berlaku, dan dapat dilaksanakan, yang sedapat mungkin mencerminkan maksud dan tujuan komersial awal dari ketentuan yang digantikan.</li> </ul>` },
+                { id: "pasal-24", title: "Pasal 24: Pengalihan Hak dan Kewajiban", content: `Tidak satu Pihak pun berhak mengalihkan hak dan/atau kewajibannya berdasarkan Perjanjian ini, baik sebagian maupun seluruhnya, kepada pihak ketiga mana pun tanpa persetujuan tertulis terlebih dahulu dari Pihak lainnya, kecuali peralihan hak dan kewajiban yang terjadi karena hukum sebagai akibat dari Penggabungan ini.` },
+                { id: "pasal-25", title: "Pasal 25: Lampiran", content: `Lampiran-lampiran berikut merupakan satu kesatuan dan bagian yang tidak terpisahkan dari Perjanjian ini:<br> <ol class="list-decimal space-y-2 mt-4"> <li>Lampiran 1: Salinan Akta Berita Acara RUPSLB Bank HASEJA Nomor 35 tanggal 15 April 2025</li> <li>Lampiran 2: Salinan Akta Berita Acara RUPSLB Bank PERSADA Nomor 42 tanggal 16 April 2025</li> <li>Lampiran 3: Rancangan Penggabungan yang Telah Disetujui RUPSLB</li> <li>Lampiran 4: Laporan Penilaian Independen PT Penilai Profesional Indonesia Nomor LPI-007/FIN-VAL/III/2025 tanggal 1 Maret 2025 Mengenai Rasio Konversi Saham</li> <li>Lampiran 5: Laporan Keuangan Proforma Bank PERSADA Setelah Penggabungan per tanggal perkiraan Tanggal Efektif Penggabungan.</li> </ol>` },
+                contractData[contractData.length-1] // pasal-26
+            ];
+
+            const navList = document.getElementById('nav-list');
+            const contractContent = document.getElementById('contract-content');
+
+            // Populate navigation and content
+            fullContractData.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${item.id}" class="nav-link block px-4 py-2 rounded-md hover:bg-gray-100 transition-colors">${item.title}</a>`;
+                navList.appendChild(li);
+                const section = document.createElement('section');
+                section.id = item.id;
+                section.className = 'searchable-section scroll-mt-20 bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-200';
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'prose max-w-none mt-6 text-gray-600 searchable-content';
+                contentDiv.innerHTML = item.content;
+                
+                section.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800 searchable-title">${item.title}</h2>
+                        <button class="ai-explain-btn text-sm font-semibold text-purple-600 hover:text-purple-800" data-target-id="${item.id}">
+                            <span class="hidden sm:inline">✨ Jelaskan dengan AI</span> <i class="fas fa-brain ml-1"></i>
+                        </button>
+                    </div>
+                    <div class="explanation hidden mt-4 p-4 bg-purple-50 border-l-4 border-purple-300 text-gray-700 rounded-r-lg">
+                        <!-- AI Explanation will be loaded here -->
+                    </div>
+                `;
+                section.appendChild(contentDiv);
+                contractContent.appendChild(section);
+                section.dataset.originalHtml = section.innerHTML;
+            });
+            
+            // --- AI & EVENT LISTENERS ---
+            
+            // Executive Summary
+            const summarizeBtn = document.getElementById('summarize-btn');
+            const summaryModal = document.getElementById('summary-modal');
+            const closeSummaryModal = document.getElementById('close-summary-modal');
+            const summaryLoader = document.getElementById('summary-loader');
+            const summaryText = document.getElementById('summary-text');
+
+            summarizeBtn.addEventListener('click', async () => {
+                summaryModal.classList.remove('hidden');
+                summaryLoader.classList.remove('hidden');
+                summaryText.innerHTML = '';
+                
+                try {
+                    const fullText = fullContractData.map(p => `Judul: ${p.title}\nIsi: ${p.content.replace(/<[^>]*>/g, ' ')}`).join('\n\n---\n\n');
+                    const prompt = `Buatlah ringkasan eksekutif yang jelas dan ringkas dari perjanjian merger berikut. Fokus pada poin-poin kunci seperti para pihak, tujuan merger, rasio konversi saham, susunan direksi dan dewan komisaris baru, tanggal efektif, dan perlakuan terhadap karyawan. Gunakan format poin-poin (bullet points) dalam Bahasa Indonesia untuk kejelasan.\n\nKontrak:\n${fullText}`;
+                    const summary = await callGemini(prompt);
+                    summaryText.innerHTML = summary.replace(/\n/g, '<br>'); // Simple markdown to html
+                } catch (error) {
+                    summaryText.innerHTML = `<p class="text-red-500">Gagal memuat ringkasan. Silakan coba lagi. Error: ${error.message}</p>`;
+                } finally {
+                    summaryLoader.classList.add('hidden');
+                }
+            });
+
+            closeSummaryModal.addEventListener('click', () => summaryModal.classList.add('hidden'));
+            summaryModal.addEventListener('click', (e) => {
+                if(e.target === summaryModal) {
+                    summaryModal.classList.add('hidden');
+                }
+            });
+
+            // AI Clause Explanation
+            contractContent.addEventListener('click', async (e) => {
+                const button = e.target.closest('.ai-explain-btn');
+                if (!button) return;
+
+                const targetId = button.dataset.targetId;
+                const section = document.getElementById(targetId);
+                const explanationDiv = section.querySelector('.explanation');
+                
+                // Toggle visibility
+                const isHidden = explanationDiv.classList.contains('hidden');
+                explanationDiv.classList.toggle('hidden');
+
+                // Generate content only if it's being opened and is empty
+                if (isHidden && !explanationDiv.dataset.loaded) {
+                    explanationDiv.innerHTML = '<div class="flex items-center"><div class="loader mr-2"></div><span>AI sedang menganalisis...</span></div>';
+                    
+                    try {
+                        const contentToExplain = section.querySelector('.searchable-content').innerText;
+                        const titleToExplain = section.querySelector('.searchable-title').innerText;
+                        const prompt = `Anda adalah asisten hukum AI. Jelaskan isi dari "${titleToExplain}" dalam sebuah kontrak merger berikut ini. Gunakan bahasa Indonesia yang sederhana, jelas, dan mudah dipahami oleh orang awam. Hindari jargon hukum yang rumit dan fokus pada arti praktisnya bagi pihak-pihak yang terlibat.\n\nIsi Pasal:\n"${contentToExplain}"\n\nPenjelasan Sederhana:`;
+                        
+                        const explanation = await callGemini(prompt);
+                        explanationDiv.innerHTML = explanation.replace(/\n/g, '<br>');
+                        explanationDiv.dataset.loaded = 'true'; // Cache the result
+                    } catch (error) {
+                         explanationDiv.innerHTML = `<p class="text-red-500">Gagal memuat penjelasan. Silakan coba lagi. Error: ${error.message}</p>`;
+                         delete explanationDiv.dataset.loaded; // Allow retry
+                    }
+                }
+            });
+
+
+            // --- (Existing Search and UI code, slightly modified to work with AI features) ---
+            let searchMatches = [];
+            let currentMatchIndex = -1;
+            const allSections = document.querySelectorAll('.searchable-section');
+
+            const searchInput = document.getElementById('search-input');
+            const searchNavControls = document.getElementById('search-nav-controls');
+            const searchCounter = document.getElementById('search-counter');
+            const prevMatchBtn = document.getElementById('prev-match');
+            const nextMatchBtn = document.getElementById('next-match');
+            
+            // ... (rest of the JS code for search, mobile nav, etc. remains the same)
+            function performSearch(query) {
+                // Reset search state
+                searchMatches = [];
+                currentMatchIndex = -1;
+
+                allSections.forEach(section => {
+                    // Restore original content before a new search
+                    section.innerHTML = section.dataset.originalHtml;
+                    section.style.display = 'block';
+                });
+
+                if (!query.trim()) {
+                    searchNavControls.classList.add('hidden');
+                    return;
+                }
+
+                const regex = new RegExp(`(${query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                
+                allSections.forEach(section => {
+                    let hasMatch = false;
+                    ['.searchable-title', '.searchable-content'].forEach(selector => {
+                         const element = section.querySelector(selector);
+                         if(element && element.textContent.toLowerCase().includes(query.trim().toLowerCase())) {
+                             hasMatch = true;
+                             const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+                             let node;
+                             const nodesToReplace = [];
+                             while(node = walker.nextNode()) {
+                                 if (node.nodeValue.match(regex)) nodesToReplace.push(node);
+                             }
+                             nodesToReplace.forEach(node => {
+                                const fragment = document.createDocumentFragment();
+                                node.nodeValue.split(regex).forEach((part, index) => {
+                                    if (index % 2 === 1) {
+                                        const mark = document.createElement('mark');
+                                        mark.textContent = part;
+                                        fragment.appendChild(mark);
+                                    } else if (part) {
+                                        fragment.appendChild(document.createTextNode(part));
+                                    }
+                                });
+                                node.parentNode.replaceChild(fragment, node);
+                             });
+                         }
+                    });
+                });
+                
+                searchMatches = Array.from(document.querySelectorAll('#contract-content mark'));
+                searchNavControls.classList.toggle('hidden', searchMatches.length === 0);
+                searchNavControlsMobile.classList.toggle('hidden', searchMatches.length === 0);
+
+                if (searchMatches.length > 0) {
+                   currentMatchIndex = 0;
+                }
+                
+                updateSearchNavigation();
+            }
+            
+            function updateSearchNavigation() {
+                document.querySelectorAll('mark.current-match').forEach(m => m.classList.remove('current-match'));
+                
+                if (currentMatchIndex > -1 && searchMatches.length > 0) {
+                    const current = searchMatches[currentMatchIndex];
+                    current.classList.add('current-match');
+                    current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                const counterText = searchMatches.length > 0 ? `${currentMatchIndex + 1} dari ${searchMatches.length}` : '0/0';
+                searchCounter.textContent = counterText;
+                searchCounterMobile.textContent = counterText;
+
+                [prevMatchBtn, nextMatchBtn, prevMatchBtnMobile, nextMatchBtnMobile].forEach(btn => {
+                    btn.disabled = searchMatches.length === 0;
+                });
+            }
+
+            nextMatchBtn.addEventListener('click', () => {
+                if(searchMatches.length === 0) return;
+                currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+                updateSearchNavigation();
+            });
+            prevMatchBtn.addEventListener('click', () => {
+                if(searchMatches.length === 0) return;
+                currentMatchIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+                updateSearchNavigation();
+            });
+
+            // Mobile Handlers
+            const searchInputMobile = document.getElementById('search-input-mobile');
+            const nextMatchBtnMobile = document.getElementById('next-match-mobile');
+            const prevMatchBtnMobile = document.getElementById('prev-match-mobile');
+            const searchCounterMobile = document.getElementById('search-counter-mobile');
+            const searchNavControlsMobile = document.getElementById('search-nav-controls-mobile');
+
+            nextMatchBtnMobile.addEventListener('click', () => nextMatchBtn.click());
+            prevMatchBtnMobile.addEventListener('click', () => prevMatchBtn.click());
+
+            const syncAndSearch = (e) => {
+                const query = e.target.value;
+                searchInput.value = query;
+                searchInputMobile.value = query;
+                performSearch(query);
+            };
+
+            searchInput.addEventListener('input', syncAndSearch);
+            searchInputMobile.addEventListener('input', syncAndSearch);
+
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            menuToggle.addEventListener('click', () => sidebar.classList.toggle('hidden'));
+            
+            // Mobile search toggle
+            const searchToggleMobile = document.getElementById('search-toggle-mobile');
+            const mobileSearchOverlay = document.getElementById('mobile-search-overlay');
+            const mobileOverlayCloseArea = document.getElementById('mobile-overlay-close-area');
+
+            searchToggleMobile.addEventListener('click', () => {
+                mobileSearchOverlay.classList.remove('hidden');
+                searchInputMobile.focus();
+            });
+            mobileOverlayCloseArea.addEventListener('click', () => mobileSearchOverlay.classList.add('hidden'));
+
+
+            // Active link highlighting on scroll
+            const sections = fullContractData.map(item => document.getElementById(item.id));
+            sections.unshift(document.getElementById('ikhtisar'));
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+
+            sections.forEach(section => {
+                if(section) observer.observe(section);
+            });
+
+        });
+    </script>
+
+</body>
+</html>
